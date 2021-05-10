@@ -150,15 +150,26 @@ a:hover,
 
 /* HOME PAGE */
 
-.circle-img {
-  object-fit: cover;
+.circle-img-2 {
   width: 200px;
   height: 200px;
+}
+
+.circle-img-2 {
+  width: 165px;
+  height: 165px;
+  margin-left: 25%;
+}
+
+.circle-img,
+.circle-img-2 {
+  object-fit: cover;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s linear;
   -webkit-transition: all 0.2s linear;
 }
+
 .circle-img:hover {
   transform: scale(1.1);
   -ms-transform: scale(1.1);
@@ -316,7 +327,7 @@ hr.gradient-style {
 }
 
 .img-small {
-  height: 5%;
+  height: 10rem;
   margin: 2px;
 }
 

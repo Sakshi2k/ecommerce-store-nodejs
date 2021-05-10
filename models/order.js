@@ -44,9 +44,14 @@ const orderSchema = Schema({
     type: String,
     required: true,
   },
+  paymentMode : {
+    type: String,
+    enum : ['COD','card'],
+    required: true,
+  },
   paymentId: {
     type: String,
-    required: true,
+    required: false,
   },
   createdAt: {
     type: Date,

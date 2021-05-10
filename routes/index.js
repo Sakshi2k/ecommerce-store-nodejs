@@ -39,6 +39,7 @@ router.get("/add-to-cart/:id", async (req, res) => {
       (!req.user && req.session.cart)
     ) {
       cart = await new Cart(req.session.cart);
+      cart.save();
     } else if (!req.user || !user_cart) {
       cart = new Cart({});
     } else {
@@ -217,8 +218,8 @@ router.get("/checkout", middleware.isLoggedIn, async (req, res) => {
   });
 });
 
-// POST: handle checkout logic and payment using Stripe
-router.post("/checkout", middleware.isLoggedIn, async (req, res) => {
+// POST: handle checkout logic and payment using Stripe - CARD PAYMENT
+router.post("/checkout/cardpayment", middleware.isLoggedIn, async (req, res) => {
   if (!req.session.cart) {
     return res.redirect("/shopping-cart");
   }
@@ -244,8 +245,10 @@ router.post("/checkout", middleware.isLoggedIn, async (req, res) => {
           items: cart.items,
         },
         address: req.body.address,
+        paymentMode : 'card',
         paymentId: charge.id,
       });
+      
       order.save(async (err, newOrder) => {
         if (err) {
           console.log(err);
@@ -259,6 +262,37 @@ router.post("/checkout", middleware.isLoggedIn, async (req, res) => {
       });
     }
   );
+});
+
+// POST: handle checkout logic - CARD PAYMENT
+router.post("/checkout/cod", middleware.isLoggedIn, async (req, res) => {
+  if (!req.session.cart) {
+    return res.redirect("/shopping-cart");
+  }
+  const cart = await Cart.findById(req.session.cart._id);
+
+  const order = new Order({
+    user: req.user,
+    cart: {
+      totalQty: cart.totalQty,
+      totalCost: cart.totalCost,
+      items: cart.items
+    },
+    address: req.body.address,
+    paymentMode : 'COD',
+  });
+  
+  order.save(async (err, newOrder) => {
+    if (err) {
+      console.log(err);
+      return res.redirect("/checkout");
+    }
+    await cart.save();
+    await Cart.findByIdAndDelete(cart._id);
+    req.flash("success", "Successfully purchased"+newOrder.cart.items.length+" items");
+    req.session.cart = null;
+    res.redirect("/user/profile");
+  });
 });
 
 // create products array to store the info of each product in the cart
