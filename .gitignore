@@ -1,2 +1,11 @@
 /node_modules
 .env
+
+# To be added later
+/public/images
+/seedDB
+/views/pages/contact-us.ejs
+README.md
+
+# To be Deprecated
+/components/
